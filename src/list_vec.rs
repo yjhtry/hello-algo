@@ -12,10 +12,11 @@ pub struct VecList<T> {
 
 impl<T> VecList<T> {
     pub fn new() -> Self {
+        const DEFAULT_CAPACITY: usize = 10;
         VecList {
-            data: Vec::new(),
+            data: Vec::with_capacity(DEFAULT_CAPACITY),
             size: 0,
-            capacity: 10,
+            capacity: DEFAULT_CAPACITY,
             extend_ratio: 2,
         }
     }
@@ -63,7 +64,8 @@ impl<T> List for VecList<T> {
             self.extend_capacity();
         }
 
-        self.data[self.size] = item;
+        self.data.push(item);
+
         self.size += 1;
     }
 
@@ -128,5 +130,76 @@ impl<T> List for VecList<T> {
         }
 
         res
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn setup_list() -> VecList<i32> {
+        let mut list = VecList::new();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+
+        list
+    }
+
+    #[test]
+    fn test_get() {
+        let list = setup_list();
+        println!("{:?}", list);
+        assert_eq!(list.get(0), Some(&1));
+        assert_eq!(list.get(1), Some(&2));
+        assert_eq!(list.get(2), Some(&3));
+        assert_eq!(list.get(3), Some(&4));
+        assert_eq!(list.get(4), Some(&5));
+        assert_eq!(list.get(5), None);
+    }
+
+    #[test]
+    fn test_set() {
+        let mut list = setup_list();
+        assert_eq!(list.set(0, 10), Some(1));
+        assert_eq!(list.set(1, 20), Some(2));
+        assert_eq!(list.set(2, 30), Some(3));
+        assert_eq!(list.set(3, 40), Some(4));
+        assert_eq!(list.set(4, 50), Some(5));
+        assert_eq!(list.set(5, 60), None);
+    }
+
+    #[test]
+    fn test_add() {
+        let mut list = setup_list();
+        list.add(6);
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        list.add(10);
+
+        assert_eq!(list.get(5), Some(&6));
+        assert_eq!(list.get(6), Some(&7));
+        assert_eq!(list.get(7), Some(&8));
+        assert_eq!(list.get(8), Some(&9));
+        assert_eq!(list.get(9), Some(&10));
+    }
+
+    #[test]
+    fn test_insert() {
+        let mut list = setup_list();
+        list.insert(0, 10);
+        list.insert(1, 20);
+        list.insert(2, 30);
+        list.insert(3, 40);
+        list.insert(4, 50);
+
+        assert_eq!(list.get(0), Some(&10));
+        assert_eq!(list.get(1), Some(&20));
+        assert_eq!(list.get(2), Some(&30));
+        assert_eq!(list.get(3), Some(&40));
+        assert_eq!(list.get(4), Some(&50));
     }
 }
