@@ -51,12 +51,12 @@ impl<T> List for VecList<T> {
     }
 
     fn set(&mut self, index: usize, item: Self::Item) -> Option<Self::Item> {
-        if index < self.size {
-            let old_item = std::mem::replace(&mut self.data[index], item);
-            Some(old_item)
-        } else {
-            None
+        if index >= self.size {
+            return None;
         }
+
+        let old_item = std::mem::replace(&mut self.data[index], item);
+        Some(old_item)
     }
 
     fn add(&mut self, item: Self::Item) {
@@ -69,7 +69,7 @@ impl<T> List for VecList<T> {
         self.size += 1;
     }
 
-    fn insert(&mut self, index: usize, mut item: Self::Item) {
+    fn insert(&mut self, index: usize, item: Self::Item) {
         if index >= self.size {
             panic!("index out of bounds");
         }
@@ -78,10 +78,7 @@ impl<T> List for VecList<T> {
             self.extend_capacity();
         }
 
-        // todo Test
-        for i in index..=self.size {
-            item = std::mem::replace(&mut self.data[i], item);
-        }
+        self.data.insert(index, item);
 
         self.size += 1;
     }
@@ -149,6 +146,32 @@ mod tests {
     }
 
     #[test]
+    fn test_new() {
+        let list: VecList<i32> = VecList::new();
+        assert_eq!(list.size(), 0);
+        assert_eq!(list.capacity(), 10);
+    }
+
+    #[test]
+    fn test_with_capacity() {
+        let list: VecList<i32> = VecList::with_capacity(5);
+        assert_eq!(list.size(), 0);
+        assert_eq!(list.capacity(), 5);
+    }
+
+    #[test]
+    fn test_size() {
+        let list = setup_list();
+        assert_eq!(list.size(), 5);
+    }
+
+    #[test]
+    fn test_capacity() {
+        let list = setup_list();
+        assert_eq!(list.capacity(), 10);
+    }
+
+    #[test]
     fn test_get() {
         let list = setup_list();
         println!("{:?}", list);
@@ -174,12 +197,16 @@ mod tests {
     #[test]
     fn test_add() {
         let mut list = setup_list();
+
+        assert_eq!(list.size(), 5);
+
         list.add(6);
         list.add(7);
         list.add(8);
         list.add(9);
         list.add(10);
 
+        assert_eq!(list.size(), 10);
         assert_eq!(list.get(5), Some(&6));
         assert_eq!(list.get(6), Some(&7));
         assert_eq!(list.get(7), Some(&8));
@@ -196,10 +223,45 @@ mod tests {
         list.insert(3, 40);
         list.insert(4, 50);
 
+        assert_eq!(list.size(), 10);
+
         assert_eq!(list.get(0), Some(&10));
         assert_eq!(list.get(1), Some(&20));
         assert_eq!(list.get(2), Some(&30));
         assert_eq!(list.get(3), Some(&40));
         assert_eq!(list.get(4), Some(&50));
+    }
+
+    #[test]
+    fn test_remove() {
+        let mut list = setup_list();
+        assert_eq!(list.remove(0), Some(1));
+        assert_eq!(list.remove(1), Some(3));
+        assert_eq!(list.remove(2), Some(5));
+        assert_eq!(list.remove(3), None);
+
+        assert_eq!(list.size(), 2);
+    }
+
+    #[test]
+    fn test_extend_capacity() {
+        let mut list = VecList::with_capacity(5);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+
+        assert_eq!(list.capacity(), 5);
+        assert_eq!(list.size(), 5);
+
+        list.add(6);
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        list.add(10);
+
+        assert_eq!(list.capacity(), 10);
+        assert_eq!(list.size(), 10);
     }
 }
