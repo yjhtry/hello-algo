@@ -130,6 +130,21 @@ impl<T> List for VecList<T> {
     }
 }
 
+impl<T> Iterator for VecList<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.size == 0 {
+            return None;
+        }
+
+        let item = self.data.pop();
+        self.size -= 1;
+
+        item
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -263,5 +278,26 @@ mod tests {
 
         assert_eq!(list.capacity(), 10);
         assert_eq!(list.size(), 10);
+    }
+
+    #[test]
+    fn test_to_vec() {
+        let list = setup_list();
+        let vec = list.to_vec();
+
+        assert_eq!(vec, vec![1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_iterator() {
+        let list = setup_list();
+        let mut iter = list.into_iter();
+
+        assert_eq!(iter.next(), Some(5));
+        assert_eq!(iter.next(), Some(4));
+        assert_eq!(iter.next(), Some(3));
+        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next(), None);
     }
 }
