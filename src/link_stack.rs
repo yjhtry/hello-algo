@@ -1,11 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::Stack;
-
-pub struct LinkNode<T> {
-    next: Option<Rc<RefCell<LinkNode<T>>>>,
-    value: T,
-}
+use crate::{LinkNode, Stack};
 
 pub struct LinkStack<T> {
     head: Option<Rc<RefCell<LinkNode<T>>>>,
