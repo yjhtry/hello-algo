@@ -2,23 +2,27 @@ use std::fmt::Debug;
 
 use crate::Queue;
 
+const DEFAULT_CAPACITY: usize = 3;
+
 #[derive(Debug)]
 pub struct VecQueue<T> {
     data: Vec<T>,
-    head: usize,
-    tail: usize,
+    front: usize,
+    rear: usize,
     size: usize,
     capacity: usize,
+    capacity_ratio: usize,
 }
 
 impl<T: Copy + Default + Debug> VecQueue<T> {
     pub fn new() -> Self {
         VecQueue {
-            data: vec![Default::default(); 3],
-            head: 0,
-            tail: 0,
+            data: vec![Default::default(); DEFAULT_CAPACITY],
+            front: 0,
+            rear: 0,
             size: 0,
-            capacity: 3,
+            capacity: DEFAULT_CAPACITY,
+            capacity_ratio: 2,
         }
     }
 
@@ -36,7 +40,7 @@ impl<T: Copy + Default + Debug> Queue for VecQueue<T> {
 
     fn push(&mut self, value: Self::Item) {
         if self.size == self.capacity {
-            let new_capacity = self.capacity * 2;
+            let new_capacity = self.capacity * self.capacity_ratio;
             let mut data = vec![Default::default(); new_capacity];
 
             for (i, v) in self.to_vec().into_iter().enumerate() {
@@ -44,14 +48,14 @@ impl<T: Copy + Default + Debug> Queue for VecQueue<T> {
             }
 
             self.data = data;
-            self.head = 0;
-            self.tail = self.size;
+            self.front = 0;
+            self.rear = self.size;
             self.capacity = new_capacity;
         }
 
-        self.data[self.tail] = value;
+        self.data[self.rear] = value;
 
-        self.tail = (self.tail + 1) % self.capacity;
+        self.rear = (self.rear + 1) % self.capacity;
 
         self.size += 1;
     }
@@ -61,9 +65,9 @@ impl<T: Copy + Default + Debug> Queue for VecQueue<T> {
             return None;
         }
 
-        let value = self.data[self.head];
+        let value = self.data[self.front];
 
-        self.head = (self.head + 1) % self.capacity;
+        self.front = (self.front + 1) % self.capacity;
 
         self.size -= 1;
 
@@ -71,13 +75,13 @@ impl<T: Copy + Default + Debug> Queue for VecQueue<T> {
     }
 
     fn peek(&self) -> Option<Self::Item> {
-        self.data.get(self.head).map(|v| *v)
+        self.data.get(self.front).map(|v| *v)
     }
 
     fn to_vec(&self) -> Vec<Self::Item> {
         let mut result = Vec::with_capacity(self.size);
 
-        let mut i = self.head;
+        let mut i = self.front;
         let mut size = self.size;
 
         while size > 0 {
@@ -89,6 +93,14 @@ impl<T: Copy + Default + Debug> Queue for VecQueue<T> {
         }
 
         result
+    }
+
+    fn clear(&mut self) {
+        self.front = 0;
+        self.rear = 0;
+        self.size = 0;
+        self.data = vec![Default::default(); DEFAULT_CAPACITY];
+        self.capacity = DEFAULT_CAPACITY;
     }
 }
 
@@ -135,6 +147,20 @@ mod tests {
         }
 
         // assert_eq!(queue.size(), 0);
+        assert_eq!(queue.is_empty(), true);
+    }
+
+    #[test]
+    fn test_vec_queue_clear() {
+        let mut queue = VecQueue::new();
+
+        queue.push(1);
+        queue.push(2);
+        queue.push(3);
+
+        queue.clear();
+
+        assert_eq!(queue.size(), 0);
         assert_eq!(queue.is_empty(), true);
     }
 }

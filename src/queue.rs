@@ -5,4 +5,5 @@ pub trait Queue {
     // todo return Option<&Self::Item>
     fn peek(&self) -> Option<Self::Item>;
     fn to_vec(&self) -> Vec<Self::Item>;
+    fn clear(&mut self);
 }
