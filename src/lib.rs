@@ -1,3 +1,5 @@
+mod double_queue;
+mod link_double_queue;
 mod link_node;
 mod link_queue;
 mod link_stack;
@@ -9,7 +11,9 @@ mod vec_double_queue;
 mod vec_queue;
 mod vec_stack;
 
-pub use link_node::LinkNode;
+pub use double_queue::DoubleQueue;
+pub use link_double_queue::LinkDoubleQueue;
+pub use link_node::{DoubleLinkNode, LinkNode};
 pub use link_queue::LinkQueue;
 pub use link_stack::LinkStack;
 pub use list::List;
