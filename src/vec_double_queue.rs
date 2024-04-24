@@ -36,13 +36,14 @@ impl<T: Copy + Default> VecDoubleQueue<T> {
         if self.size == self.capacity {
             let new_capacity = self.capacity * self.capacity_ratio;
             let mut data = vec![Default::default(); new_capacity];
+            let start = new_capacity - self.size;
 
             for (i, v) in self.data.to_vec().into_iter().enumerate() {
-                data[new_capacity - self.size + i] = v;
+                data[start + i] = v;
             }
 
             self.data = data;
-            self.front = new_capacity - self.size;
+            self.front = start;
             self.capacity = new_capacity;
         }
     }

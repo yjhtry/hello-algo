@@ -51,6 +51,11 @@ export class LinkQueue<T> {
     this.front  = front!.next
 
     this._size--;
+
+    if (this._size === 0) {
+      this.rear = null;
+    }
+
     return front!.data
   }
 
