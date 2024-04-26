@@ -1,4 +1,5 @@
 mod double_queue;
+mod linear_hashmap;
 mod link_double_queue;
 mod link_node;
 mod link_queue;
@@ -8,10 +9,12 @@ mod list_vec;
 mod queue;
 mod stack;
 mod vec_double_queue;
+mod vec_hashmap;
 mod vec_queue;
 mod vec_stack;
 
 pub use double_queue::DoubleQueue;
+pub use linear_hashmap::LinearHashMap;
 pub use link_double_queue::LinkDoubleQueue;
 pub use link_node::{DoubleLinkNode, LinkNode};
 pub use link_queue::LinkQueue;
@@ -21,5 +24,6 @@ pub use list_vec::VecList;
 pub use queue::Queue;
 pub use stack::Stack;
 pub use vec_double_queue::VecDoubleQueue;
+pub use vec_hashmap::{KvPair, VecHashMap};
 pub use vec_queue::VecQueue;
 pub use vec_stack::VecStack;
