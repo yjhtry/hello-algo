@@ -8,6 +8,7 @@ mod list;
 mod list_vec;
 mod queue;
 mod stack;
+mod tree_node;
 mod vec_double_queue;
 mod vec_hashmap;
 mod vec_queue;
@@ -27,3 +28,5 @@ pub use vec_double_queue::VecDoubleQueue;
 pub use vec_hashmap::{KvPair, VecHashMap};
 pub use vec_queue::VecQueue;
 pub use vec_stack::VecStack;
+
+pub use tree_node::TreeNode;
